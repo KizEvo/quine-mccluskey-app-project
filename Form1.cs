@@ -2,6 +2,7 @@ using System.Linq;
 
 namespace WinFormsApp1
 {
+
     public partial class Form1 : Form
     {
         public Form1()
@@ -9,9 +10,33 @@ namespace WinFormsApp1
             InitializeComponent();
         }
 
+        public class PrimeImplicant
+        {
+            public int valueBin;
+            public bool isCurrStageMatched;
+            public int dashBin;
+            public List<bool> isDontCare = new List<bool>();
+            public List<int> numbList = new List<int>();
+
+            public PrimeImplicant(int value, bool dontCare)
+            {
+                valueBin = value;
+                isCurrStageMatched = false;
+                dashBin = 0;
+                isDontCare.Add(dontCare);
+                numbList.Add(value);
+            }
+        }
+
+        // Global variables
         private List<int> inputVals = new List<int>();
         private List<int> inputDontCares = new List<int>();
         private List<char> inputVariables = new List<char>();
+        // Global UI variables
+        Color normalColor = Color.White;
+        Color successColor = Color.LimeGreen;
+        Color errorColor = Color.Red;
+        string lineBreak = "--------------------------------------------------------------";
 
         private void display_Inputs(List<int> inputs)
         {
@@ -31,9 +56,23 @@ namespace WinFormsApp1
             Console.WriteLine();
         }
 
-        private void check_CorrectNumberOfVariables()
-        { 
+        private void check_DontCaresNotInVals()
+        {
+            for (int i = 0; i < inputDontCares.Count; i++)
+                if (inputVals.Exists(x => x == inputDontCares[i]))
+                    throw new Exception("[ERROR]: O <dont_care> ton tai gia tri trong o <gia_tri>");
+        }
 
+        private void check_CorrectNumberOfVariables()
+        {
+            int maxValue = inputVals[inputVals.Count - 1];
+            int maxBit = (int)(Math.Floor(Math.Log2(maxValue))) + 1;
+            if (maxBit != inputVariables.Count)
+            {
+                string message =
+                    String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}", maxValue, maxBit, inputVariables.Count);
+                throw new Exception(message);
+            }
         }
 
         private void check_AscendingValsAndNoDupInput()
@@ -43,7 +82,7 @@ namespace WinFormsApp1
                     if (inputVals[i] > inputVals[j])
                         throw new Exception("[ERROR]: Hay nhap o <gia_tri> theo thu tu tang dan");
                     else if (inputVals[i] == inputVals[j])
-                        throw new Exception("[ERROR]: O <gia_tri> ton tai gia tri giong nhau")
+                        throw new Exception("[ERROR]: O <gia_tri> ton tai gia tri giong nhau");
         }
 
         private void getNumbers_LineInputs(string line, ref List<int> currInputs)
@@ -91,26 +130,106 @@ namespace WinFormsApp1
             listView1.Items.Add(message);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void display_Prime(PrimeImplicant obj)
+        {
+            string numListString = string.Join(",", obj.numbList);
+            string matchesString = string.Join(",", obj.isCurrStageMatched);
+            string message = String.Format(numListString + " - {0} - Matched: " + matchesString + " - {1}", 
+                obj.dashBin, obj.isCurrStageMatched ? 'T' : 'F');
+            display_Result(message);
+        }
+
+        private void display_ClearResult()
+        {
+            listView1.Items.Clear();
+        }
+
+        private void set_ButtonColor(Color color)
+        {
+            button1.BackColor = color;
+        }
+
+        private void set_ButtonState(bool state)
+        {
+            button1.Enabled = state;
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
         {
             try
             {
+                display_ClearResult();
+                set_ButtonState(false);
+                // Get user inputs and check is inputs are in the pre-defined format
                 string lineValue = maskedTextBox1.Text.Trim();
                 string lineDontCare = maskedTextBox2.Text.Trim();
                 string lineVariable = maskedTextBox3.Text.Trim();
                 getNumbers_LineInputs(lineValue, ref inputVals);
                 getNumbers_LineInputs(lineDontCare, ref inputDontCares);
                 getChar_LineInputs(lineVariable, ref inputVariables);
+                // Second checks if inputs are in the correct format to start using quine mccluskey algo
                 check_AscendingValsAndNoDupInput();
+                check_CorrectNumberOfVariables();
+                check_DontCaresNotInVals();
+                // Display success messages
+                set_ButtonColor(successColor);
                 display_Result("[INFO] - Gia tri - : " + lineValue);
                 display_Result("[INFO] - Dont care - : " + lineDontCare);
                 display_Result("[INFO] - Bien - : " + lineVariable);
+                display_Result(lineBreak);
+                // Main function call to quine mccluskey algo
+                main_QuineMcCluskeyAlgo();
+                // Wait 500ms before existing
+                await Task.Delay(500);
+                set_ButtonState(true);
+                set_ButtonColor(normalColor);
             }
             catch (Exception ex)
             {
                 display_Result(ex.Message);
+                set_ButtonColor(errorColor);
+                await Task.Delay(500);
+                set_ButtonColor(normalColor);
+                set_ButtonState(true);
                 return;
             }
+        }
+
+        private int count_OnesOfInputBinary(int value)
+        {
+            int count = 0;
+            while (value != 0)
+            {
+                int lsb = value & 1;
+                if (lsb == 1) count++;
+                value >>= 1;
+            }
+            return count;
+        }
+
+        private void arrange_InputGroup(Dictionary<int, List<PrimeImplicant>> groups)
+        {
+            for (short i = 0; i < inputVals.Count; i++)
+            {
+                int key = count_OnesOfInputBinary(inputVals[i]);
+                if (!groups.ContainsKey(key))
+                    groups.Add(key, new List<PrimeImplicant>());
+                // START HERE ------------------------------------
+            }
+        }
+
+        private void main_QuineMcCluskeyAlgo()
+        {
+            // Sorting
+            inputDontCares.Sort();
+            inputVals.AddRange(inputDontCares);
+            inputVals.Sort();
+            display_Inputs(inputVals);
+            // Main
+            Dictionary<int, List<PrimeImplicant>>groups = new Dictionary<int, List<PrimeImplicant>>();
+
+            //PrimeImplicant obj = new PrimeImplicant(10, true);
+            //display_Prime(obj);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)

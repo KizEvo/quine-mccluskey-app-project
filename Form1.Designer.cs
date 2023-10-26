@@ -63,7 +63,7 @@
             splitContainer1.Panel2.Controls.Add(listView1);
             splitContainer1.Panel2.Paint += splitContainer1_Panel2_Paint;
             splitContainer1.Size = new Size(708, 315);
-            splitContainer1.SplitterDistance = 395;
+            splitContainer1.SplitterDistance = 354;
             splitContainer1.TabIndex = 3;
             // 
             // tableLayoutPanel1
@@ -93,20 +93,21 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(391, 311);
+            tableLayoutPanel1.Size = new Size(350, 311);
             tableLayoutPanel1.TabIndex = 1;
             tableLayoutPanel1.Paint += tableLayoutPanel1_Paint;
             // 
             // button1
             // 
             button1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            button1.BackColor = SystemColors.Control;
             button1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            button1.Location = new Point(159, 189);
+            button1.Location = new Point(143, 189);
             button1.Name = "button1";
-            button1.Size = new Size(72, 56);
+            button1.Size = new Size(64, 56);
             button1.TabIndex = 1;
             button1.Text = "Rút gọn";
-            button1.UseVisualStyleBackColor = true;
+            button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
             // maskedTextBox1
@@ -115,9 +116,9 @@
             maskedTextBox1.BackColor = SystemColors.Window;
             tableLayoutPanel1.SetColumnSpan(maskedTextBox1, 4);
             maskedTextBox1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            maskedTextBox1.Location = new Point(81, 16);
+            maskedTextBox1.Location = new Point(73, 16);
             maskedTextBox1.Name = "maskedTextBox1";
-            maskedTextBox1.Size = new Size(307, 29);
+            maskedTextBox1.Size = new Size(274, 29);
             maskedTextBox1.TabIndex = 0;
             maskedTextBox1.Text = "1,2,7,11,15";
             maskedTextBox1.MaskInputRejected += maskedTextBox1_MaskInputRejected;
@@ -132,9 +133,9 @@
             label1.Location = new Point(3, 248);
             label1.Name = "label1";
             label1.Padding = new Padding(0, 8, 0, 8);
-            label1.Size = new Size(385, 63);
+            label1.Size = new Size(344, 63);
             label1.TabIndex = 4;
-            label1.Text = "Nhập vào các ô theo định dạng:\r\n<gia_tri_1>,<gia_tri_2>,..,<gia_tri_n>\r\nVD: 0,1,4,7,8,12\r\n";
+            label1.Text = "Nhập vào các ô theo định dạng giá trị tăng dần:\r\n<gia_tri_1>,<gia_tri_2>,..,<gia_tri_n>\r\nVD: 0,1,4,7,8,12\r\n";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             label1.Click += label1_Click;
             // 
@@ -143,9 +144,9 @@
             maskedTextBox2.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel1.SetColumnSpan(maskedTextBox2, 4);
             maskedTextBox2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            maskedTextBox2.Location = new Point(81, 78);
+            maskedTextBox2.Location = new Point(73, 78);
             maskedTextBox2.Name = "maskedTextBox2";
-            maskedTextBox2.Size = new Size(307, 29);
+            maskedTextBox2.Size = new Size(274, 29);
             maskedTextBox2.TabIndex = 5;
             maskedTextBox2.Text = "4,5";
             // 
@@ -154,9 +155,9 @@
             maskedTextBox3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             tableLayoutPanel1.SetColumnSpan(maskedTextBox3, 4);
             maskedTextBox3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            maskedTextBox3.Location = new Point(81, 140);
+            maskedTextBox3.Location = new Point(73, 140);
             maskedTextBox3.Name = "maskedTextBox3";
-            maskedTextBox3.Size = new Size(307, 29);
+            maskedTextBox3.Size = new Size(274, 29);
             maskedTextBox3.TabIndex = 7;
             maskedTextBox3.Text = "a,b,c,d";
             // 
@@ -167,7 +168,7 @@
             label2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             label2.Location = new Point(3, 23);
             label2.Name = "label2";
-            label2.Size = new Size(72, 15);
+            label2.Size = new Size(64, 15);
             label2.TabIndex = 6;
             label2.Text = "Giá trị :";
             label2.TextAlign = ContentAlignment.MiddleRight;
@@ -180,9 +181,9 @@
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             label3.Location = new Point(3, 85);
             label3.Name = "label3";
-            label3.Size = new Size(72, 15);
+            label3.Size = new Size(64, 15);
             label3.TabIndex = 8;
-            label3.Text = "Don't care :";
+            label3.Text = "Dont care :";
             label3.TextAlign = ContentAlignment.MiddleRight;
             // 
             // label4
@@ -191,7 +192,7 @@
             label4.AutoSize = true;
             label4.Location = new Point(3, 147);
             label4.Name = "label4";
-            label4.Size = new Size(72, 15);
+            label4.Size = new Size(64, 15);
             label4.TabIndex = 9;
             label4.Text = "Tên biến :";
             label4.TextAlign = ContentAlignment.MiddleRight;
@@ -203,7 +204,7 @@
             listView1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
             listView1.Location = new Point(0, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(305, 311);
+            listView1.Size = new Size(346, 311);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -212,7 +213,7 @@
             // columnHeader1
             // 
             columnHeader1.Text = "Kết quả :";
-            columnHeader1.Width = 300;
+            columnHeader1.Width = 400;
             // 
             // Form1
             // 
