@@ -58,7 +58,7 @@ namespace WinFormsApp1
 
         private void check_DontCaresNotInVals()
         {
-            for (int i = 0; i < inputDontCares.Count; i++)
+            for (short i = 0; i < inputDontCares.Count; i++)
                 if (inputVals.Exists(x => x == inputDontCares[i]))
                     throw new Exception("[ERROR]: O <dont_care> ton tai gia tri trong o <gia_tri>");
         }
@@ -132,11 +132,24 @@ namespace WinFormsApp1
 
         private void display_Prime(PrimeImplicant obj)
         {
-            string numListString = string.Join(",", obj.numbList);
-            string matchesString = string.Join(",", obj.isCurrStageMatched);
-            string message = String.Format(numListString + " - {0} - Matched: " + matchesString + " - {1}", 
+            string numListString = String.Join(",", obj.numbList);
+            string isDontCareString = String.Join(",", obj.isDontCare);
+            string message = String.Format(numListString + " - {0} - Matched: {1} - " + isDontCareString, 
                 obj.dashBin, obj.isCurrStageMatched ? 'T' : 'F');
             display_Result(message);
+        }
+
+        private void display_PrimeGroups(Dictionary<int, List<PrimeImplicant>> groups)
+        {
+            Dictionary<int, List<PrimeImplicant>>.KeyCollection keyColl = groups.Keys;
+            foreach (int key in keyColl)
+            {
+                List<PrimeImplicant> primeList = groups[key];
+                string additionalInfo = String.Format("-- Key: {0} --", key);
+                display_Result(additionalInfo);
+                foreach (PrimeImplicant prime in primeList) 
+                    display_Prime(prime);
+            }
         }
 
         private void display_ClearResult()
@@ -194,7 +207,7 @@ namespace WinFormsApp1
                 return;
             }
         }
-
+        
         private int count_OnesOfInputBinary(int value)
         {
             int count = 0;
@@ -214,7 +227,9 @@ namespace WinFormsApp1
                 int key = count_OnesOfInputBinary(inputVals[i]);
                 if (!groups.ContainsKey(key))
                     groups.Add(key, new List<PrimeImplicant>());
-                // START HERE ------------------------------------
+                bool isDontCare = inputDontCares.Exists(x => x == inputVals[i]);
+                PrimeImplicant minTerm = new PrimeImplicant(inputVals[i], isDontCare);
+                groups[key].Add(minTerm);
             }
         }
 
@@ -227,7 +242,8 @@ namespace WinFormsApp1
             display_Inputs(inputVals);
             // Main
             Dictionary<int, List<PrimeImplicant>>groups = new Dictionary<int, List<PrimeImplicant>>();
-
+            arrange_InputGroup(groups);
+            display_PrimeGroups(groups);
             //PrimeImplicant obj = new PrimeImplicant(10, true);
             //display_Prime(obj);
         }
