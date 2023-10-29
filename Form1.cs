@@ -377,6 +377,20 @@ namespace WinFormsApp1
             return groups;
         }
 
+        private List<PrimeImplicant> get_PrimesNoDupInGroups(ref Dictionary<int, List<PrimeImplicant>> groups)
+        {
+            List<PrimeImplicant> noDupPrimes = new List<PrimeImplicant>();
+            foreach (List<PrimeImplicant> primesList in groups.Values)
+            {
+                foreach(PrimeImplicant prime in primesList)
+                {
+                    if(!noDupPrimes.Exists(x => x.dashBin == prime.dashBin))
+                        noDupPrimes.Add(prime);
+                }
+            }
+            return noDupPrimes;
+        }
+
         private void main_QuineMcCluskeyAlgo()
         {
             // Sorting
@@ -402,7 +416,13 @@ namespace WinFormsApp1
                     break;
                 }
             }
-            display_PrimeGroups(groups);
+            //display_PrimeGroups(groups);
+            List<PrimeImplicant> finalPrimeList = new List<PrimeImplicant>();
+            finalPrimeList = get_PrimesNoDupInGroups(ref groups);
+            foreach (PrimeImplicant prime in finalPrimeList)
+            {
+                display_Prime(prime);
+            }
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
