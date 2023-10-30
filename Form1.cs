@@ -429,6 +429,136 @@ namespace WinFormsApp1
             return matrix;
         }
 
+        private List<int> get_EssentialPrimes(ref List<List<int>> primeChart, ref List<int> colsPrimeChart)
+        {
+            List<int> essentialPrimes = new List<int>();
+            HashSet<int> removeCols = new HashSet<int>();
+            HashSet<int> removeRows = new HashSet<int>();
+            bool isSpRow = true;
+            bool isSpCol = true;
+            bool isSpNonSinglePrime = true;
+            isSpRow = check_RowDominance(ref primeChart, ref removeCols, ref removeRows);
+            isSpCol = check_ColDominance(ref primeChart, ref removeCols, ref removeRows);
+            // --------- START HERE
+            return essentialPrimes;
+        }
+
+        private bool check_ColDominance(ref List<List<int>> primeChart, ref HashSet<int> removeCols, ref HashSet<int> removeRows)
+        {
+            bool isSpecialCase = true;
+            List<int> currColCheckPos = new List<int>();
+            List<int> cmpColCheckPos = new List<int>();
+            display_Result("Col dominance");
+            for (int currCol = 0; currCol < primeChart.Count; currCol++)
+            {
+                for (int cmpCol = 0; cmpCol < primeChart.Count; cmpCol++)
+                {
+                    if (currCol == cmpCol || removeCols.Contains(currCol) || removeCols.Contains(cmpCol))
+                        continue;
+                    for(int row = 0; row < primeChart[currCol].Count; row++)
+                    {
+                        if (primeChart[currCol][row] != -1 && !removeRows.Contains(row))
+                            currColCheckPos.Add(row);
+                        if (primeChart[cmpCol][row] != -1 && !removeRows.Contains(row))
+                            cmpColCheckPos.Add(row);
+                    }
+                    int count = 0;
+                    if(currColCheckPos.Count > cmpColCheckPos.Count)
+                    {
+                        foreach (int rowCheckIdx in cmpColCheckPos)
+                            if (primeChart[currCol][rowCheckIdx] != -1
+                                && !removeRows.Contains(primeChart[currCol][rowCheckIdx]))
+                                count++;
+                        if (count >= cmpColCheckPos.Count)
+                        {
+                            removeCols.Add(currCol);
+                            isSpecialCase = false;
+                        }
+                    } else if (currColCheckPos.Count < cmpColCheckPos.Count)
+                    {
+                        foreach (int rowCheckIdx in currColCheckPos)
+                            if (primeChart[cmpCol][rowCheckIdx] != -1
+                                && removeRows.Contains(primeChart[cmpCol][rowCheckIdx]))
+                                count++;
+                        if (count >= currColCheckPos.Count)
+                        {
+                            removeCols.Add(cmpCol);
+                            isSpecialCase= false;
+                        }
+                    }
+                    currColCheckPos.Clear();
+                    cmpColCheckPos.Clear();
+                }
+            }
+            return isSpecialCase;
+        }
+
+        private bool check_RowDominance(ref List<List<int>> primeChart, ref HashSet<int> removeCols, ref HashSet<int> removeRows)
+        {
+            bool isSpecialCase = true;
+            List<int> currRowCheckPos = new List<int>();
+            List<int> cmpRowCheckPos = new List<int>();
+            List<List<int>> rowFirstPrimeChart = transform_ColFirstPrimeChartToRowFirst(ref primeChart);
+            display_Result("Row dominance");
+            for (int currRow = 0; currRow < rowFirstPrimeChart.Count; currRow++)
+            {
+                for(int cmpRow = 0; cmpRow < rowFirstPrimeChart.Count; cmpRow++)
+                {
+                    if (currRow == cmpRow || removeRows.Contains(cmpRow) || removeRows.Contains(currRow)) 
+                        continue;
+                    for (int col = 0; col < rowFirstPrimeChart[currRow].Count; col++)
+                    {
+                        if (rowFirstPrimeChart[currRow][col] != -1 && !removeCols.Contains(col))
+                            currRowCheckPos.Add(col);
+                        if (rowFirstPrimeChart[cmpRow][col] != -1 && !removeCols.Contains(col))
+                            cmpRowCheckPos.Add(col);
+                    }
+                    int count = 0;
+                    if (currRowCheckPos.Count > cmpRowCheckPos.Count)
+                    {
+                        foreach (int colCheckIdx in cmpRowCheckPos)
+                            if (rowFirstPrimeChart[currRow][colCheckIdx] != -1
+                                && !removeRows.Contains(rowFirstPrimeChart[currRow][colCheckIdx]))
+                                count++;
+                        if (count >= cmpRowCheckPos.Count)
+                        {
+                            removeRows.Add(cmpRow);
+                            isSpecialCase = false;
+                        }
+                    }
+                    else if (currRowCheckPos.Count < cmpRowCheckPos.Count)
+                    {
+                        foreach (int colCheckIdx in currRowCheckPos)
+                            if (rowFirstPrimeChart[cmpRow][colCheckIdx] != -1
+                                && !removeRows.Contains(rowFirstPrimeChart[cmpRow][colCheckIdx]))
+                                count++;
+                        if(count >= currRowCheckPos.Count)
+                        {
+                            removeRows.Add(currRow);
+                            isSpecialCase = false;
+                        }
+                    }
+                    currRowCheckPos.Clear();
+                    cmpRowCheckPos.Clear();
+                }
+            }
+            return isSpecialCase;
+        }
+
+        private List<List<int>> transform_ColFirstPrimeChartToRowFirst(ref List<List<int>> primeChart)
+        {
+            List<List<int>> newPrimeChartRowFirst = new List<List<int>>();
+            for (int i = 0; i < primeChart[0].Count; i++)
+            {
+                newPrimeChartRowFirst.Add(new List<int>());
+                for(int j = 0; j < primeChart.Count; j++)
+                {
+                    newPrimeChartRowFirst[i].Add(primeChart[j][i]);
+                }
+            }
+            return newPrimeChartRowFirst;
+        }
+
         private void main_QuineMcCluskeyAlgo()
         {
             // Sorting
@@ -462,6 +592,16 @@ namespace WinFormsApp1
                 display_Prime(prime);
             }
             (List<List<int>> primeChart, List<int> colsOfPrimeChart) = create_PrimeChart(finalPrimeList);
+            //Console.WriteLine("Col dominance");
+            //for (int i = 0; i < primeChart.Count; i++)
+            //{
+            //    for (int j = 0; j < primeChart[0].Count; j++)
+            //    {
+            //        Console.Write($"{primeChart[i][j]},");
+            //    }
+            //    Console.WriteLine("");
+            //}
+            get_EssentialPrimes(ref primeChart, ref colsOfPrimeChart);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
