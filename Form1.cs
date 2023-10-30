@@ -1,3 +1,5 @@
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+
 namespace WinFormsApp1
 {
 
@@ -384,11 +386,47 @@ namespace WinFormsApp1
             {
                 foreach(PrimeImplicant prime in primesList)
                 {
-                    if(!noDupPrimes.Exists(x => x.dashBin == prime.dashBin))
+                    if(!noDupPrimes.Exists(x => x.numbList.Sum() == prime.numbList.Sum()))
                         noDupPrimes.Add(prime);
                 }
             }
             return noDupPrimes;
+        }
+
+        private (List<List<int>>, List<int>) create_PrimeChart(List<PrimeImplicant> primeList)
+        {
+            List<int> cols = new List<int>();
+            foreach (PrimeImplicant prime in primeList)
+            {
+                for (int i = 0; i < prime.numbList.Count; i++)
+                {
+                    if (!cols.Exists(x => x == prime.numbList[i]) && !(prime.isDontCare[i]))
+                        cols.Add(prime.numbList[i]);
+                }
+            }
+            cols.Sort();
+            List<List<int>> primeChart = create_TwoDimMatrix(cols.Count, primeList.Count);
+            for (int i = 0; i < primeList.Count; i++)
+            {
+                foreach (int colValue in primeList[i].numbList)
+                {
+                    int col = cols.FindIndex(x => x == colValue);
+                    if (col != -1) primeChart[col][i] = i;
+                }
+            }
+            return (primeChart, cols);
+        }
+
+        private List<List<int>> create_TwoDimMatrix(int rowLength, int colLength)
+        {
+            List<List<int>> matrix = new List<List<int>>();
+            for (short r = 0; r < rowLength; r++)
+            {
+                matrix.Add(new List<int>());
+                for(short c = 0; c < colLength; c++)
+                    matrix[r].Add(-1);
+            }
+            return matrix;
         }
 
         private void main_QuineMcCluskeyAlgo()
@@ -423,6 +461,7 @@ namespace WinFormsApp1
             {
                 display_Prime(prime);
             }
+            (List<List<int>> primeChart, List<int> colsOfPrimeChart) = create_PrimeChart(finalPrimeList);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
