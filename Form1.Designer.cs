@@ -213,7 +213,7 @@
             // columnHeader1
             // 
             columnHeader1.Text = "Kết quả :";
-            columnHeader1.Width = 400;
+            columnHeader1.Width = 600;
             // 
             // Form1
             // 

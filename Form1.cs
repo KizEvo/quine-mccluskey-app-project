@@ -92,7 +92,7 @@ namespace WinFormsApp1
             if (maxBit != inputVariables.Count)
             {
                 string message =
-                    String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}", maxValue, maxBit, inputVariables.Count);
+                    String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them/bo <ten_bien>", maxValue, maxBit, inputVariables.Count);
                 throw new Exception(message);
             }
         }
@@ -126,7 +126,7 @@ namespace WinFormsApp1
             if (line.Length <= 0) throw new Exception("[ERROR]: O <ten_bien> khong duoc de trong");
             for (short i = 0; i < line.Length; i++)
             {
-                if (i % 2 == 0 && (line[i] >= 'a' && line[i] <= 'z') || (line[i] >= 'A' && line[i] == 'Z'))
+                if (i % 2 == 0 && ((line[i] >= 'a' && line[i] <= 'z') || (line[i] >= 'A' && line[i] <= 'Z')))
                 {
                     currChars.Add(line[i]);
                 }
@@ -144,7 +144,7 @@ namespace WinFormsApp1
         {
             string numListString = String.Join(",", obj.numbList);
             string isDontCareString = String.Join(",", obj.isDontCare);
-            string message = String.Format(numListString + " - {0} - Matched: {1} - " + isDontCareString, 
+            string message = String.Format(numListString + " - {0} - Matched: {1} - " + isDontCareString,
                 obj.dashBin, obj.isCurrStageMatched ? 'T' : 'F');
             display_Result(message);
         }
@@ -157,7 +157,7 @@ namespace WinFormsApp1
                 List<PrimeImplicant> primeList = groups[key];
                 string additionalInfo = String.Format("-- Key: {0} --", key);
                 display_Result(additionalInfo);
-                foreach (PrimeImplicant prime in primeList) 
+                foreach (PrimeImplicant prime in primeList)
                     display_Prime(prime);
             }
         }
@@ -193,7 +193,7 @@ namespace WinFormsApp1
                 inputVariables.Clear();
                 // Get user entered inputs, <dont_care> input can be empty
                 getNumbers_LineInputs(lineValue, ref inputVals);
-                if(lineDontCare.Length > 0) getNumbers_LineInputs(lineDontCare, ref inputDontCares);
+                if (lineDontCare.Length > 0) getNumbers_LineInputs(lineDontCare, ref inputDontCares);
                 getChar_LineInputs(lineVariable, ref inputVariables);
                 // Second checks if inputs are in the correct format to start using quine mccluskey algo
                 check_AscendingValsAndNoDupInput();
@@ -204,6 +204,7 @@ namespace WinFormsApp1
                 display_Result("[INFO] - Gia tri - : " + lineValue);
                 display_Result("[INFO] - Dont care - : " + lineDontCare);
                 display_Result("[INFO] - Bien - : " + lineVariable);
+                display_Result("[INFO] Ten bien ghi dau tien la MSB -> LSB");
                 display_Result(lineBreak);
                 // Main function call to quine mccluskey algo
                 main_QuineMcCluskeyAlgo();
@@ -222,7 +223,7 @@ namespace WinFormsApp1
                 return;
             }
         }
-        
+
         private int get_BinaryLengthOfNumb(int numb)
         {
             return (int)(Math.Floor(Math.Log2(numb))) + 1;
@@ -259,10 +260,10 @@ namespace WinFormsApp1
             List<PrimeImplicant> noMatchPrimes = new List<PrimeImplicant>();
             foreach (KeyValuePair<int, List<PrimeImplicant>> prevItem in prevGroups)
             {
-                foreach(PrimeImplicant currKeyObjPrime in prevItem.Value)
+                foreach (PrimeImplicant currKeyObjPrime in prevItem.Value)
                 {
                     if (!prevGroups.ContainsKey(prevItem.Key + 1)) break;
-                    foreach(PrimeImplicant cmpKeyObjPrime in prevGroups[prevItem.Key + 1])
+                    foreach (PrimeImplicant cmpKeyObjPrime in prevGroups[prevItem.Key + 1])
                     {
                         PrimeImplicant dcCurrObjPrime = deepCopy_PrimeImplicant(currKeyObjPrime);
                         PrimeImplicant dcCmpObjPrime = deepCopy_PrimeImplicant(cmpKeyObjPrime);
@@ -293,7 +294,7 @@ namespace WinFormsApp1
             newPrime.dashBin = primeObjToBeCopied.dashBin;
             newPrime.isCurrStageMatched = primeObjToBeCopied.isCurrStageMatched;
             // Loop through list
-            for(short i = 0; i < primeObjToBeCopied.numbList.Count; i++)
+            for (short i = 0; i < primeObjToBeCopied.numbList.Count; i++)
             {
                 newPrime.numbList.Add(primeObjToBeCopied.numbList[i]);
                 newPrime.isDontCare.Add(primeObjToBeCopied.isDontCare[i]);
@@ -303,7 +304,7 @@ namespace WinFormsApp1
 
         private void update_CurrDcPrimeImplicantPair(ref PrimeImplicant dcCurrPrime, ref PrimeImplicant dcCmpPrime, int maxBitLength)
         {
-            int newDashPosition = get_OneBitDiffPosition(dcCurrPrime.valueBin, dcCmpPrime.valueBin, 
+            int newDashPosition = get_OneBitDiffPosition(dcCurrPrime.valueBin, dcCmpPrime.valueBin,
                 dcCurrPrime.dashBin, dcCmpPrime.dashBin, maxBitLength);
             if (newDashPosition != -1)
             {
@@ -327,7 +328,7 @@ namespace WinFormsApp1
             {
                 int currValueShifted = (currValue >> shiftAmount) & 1;
                 int cmpValueShifted = (cmpValue >> shiftAmount) & 1;
-                if(currValueShifted != cmpValueShifted)
+                if (currValueShifted != cmpValueShifted)
                 {
                     countDiff += 1;
                     diffPosition = shiftAmount;
@@ -346,7 +347,7 @@ namespace WinFormsApp1
 
         private int remove_ValueBinBitBasedOnDashBin(int currPrimeValBin, int currPrimeDashBin, int maxBitLength)
         {
-            for(int shiftAmount = 0; shiftAmount < maxBitLength; shiftAmount++)
+            for (int shiftAmount = 0; shiftAmount < maxBitLength; shiftAmount++)
             {
                 int lsbOfDashBin = (currPrimeDashBin >> shiftAmount) & 1;
                 if (lsbOfDashBin == 1) currPrimeValBin &= ~(1 << shiftAmount);
@@ -354,7 +355,7 @@ namespace WinFormsApp1
             return currPrimeValBin;
         }
 
-        private void add_PrimeToNextGroups(ref Dictionary<int, List<PrimeImplicant>> newGroups, ref PrimeImplicant newPrime, int newKey) 
+        private void add_PrimeToNextGroups(ref Dictionary<int, List<PrimeImplicant>> newGroups, ref PrimeImplicant newPrime, int newKey)
         {
             if (!newGroups.ContainsKey(newKey))
                 newGroups.Add(newKey, new List<PrimeImplicant>());
@@ -366,14 +367,14 @@ namespace WinFormsApp1
             if (group1.Count != group2.Count) return false;
             foreach (int keyGroup1 in group1.Keys)
                 if (!group2.ContainsKey(keyGroup1)) return false;
-            foreach(KeyValuePair<int, List<PrimeImplicant>> item in group1)
+            foreach (KeyValuePair<int, List<PrimeImplicant>> item in group1)
                 if (group2[item.Key].Count != item.Value.Count) return false;
             return true;
         }
 
         private Dictionary<int, List<PrimeImplicant>> clear_PrimeMatchStatusInGroups(Dictionary<int, List<PrimeImplicant>> groups)
         {
-            foreach(List<PrimeImplicant> primeList in groups.Values)
+            foreach (List<PrimeImplicant> primeList in groups.Values)
                 foreach (PrimeImplicant prime in primeList)
                     prime.setMatchStatus = false;
             return groups;
@@ -384,9 +385,9 @@ namespace WinFormsApp1
             List<PrimeImplicant> noDupPrimes = new List<PrimeImplicant>();
             foreach (List<PrimeImplicant> primesList in groups.Values)
             {
-                foreach(PrimeImplicant prime in primesList)
+                foreach (PrimeImplicant prime in primesList)
                 {
-                    if(!noDupPrimes.Exists(x => x.numbList.Sum() == prime.numbList.Sum()))
+                    if (!noDupPrimes.Exists(x => x.numbList.Sum() == prime.numbList.Sum()))
                         noDupPrimes.Add(prime);
                 }
             }
@@ -423,7 +424,7 @@ namespace WinFormsApp1
             for (short r = 0; r < rowLength; r++)
             {
                 matrix.Add(new List<int>());
-                for(short c = 0; c < colLength; c++)
+                for (short c = 0; c < colLength; c++)
                     matrix[r].Add(-1);
             }
             return matrix;
@@ -434,13 +435,104 @@ namespace WinFormsApp1
             List<int> essentialPrimes = new List<int>();
             HashSet<int> removeCols = new HashSet<int>();
             HashSet<int> removeRows = new HashSet<int>();
-            bool isSpRow = true;
-            bool isSpCol = true;
-            bool isSpNonSinglePrime = true;
-            isSpRow = check_RowDominance(ref primeChart, ref removeCols, ref removeRows);
-            isSpCol = check_ColDominance(ref primeChart, ref removeCols, ref removeRows);
-            // --------- START HERE
+            bool isSpRow;
+            bool isSpCol;
+            bool isSpNonSinglePrime;
+            int count = 0;
+            while (true)
+            {
+                isSpRow = check_RowDominance(ref primeChart, ref removeCols, ref removeRows);
+                isSpCol = check_ColDominance(ref primeChart, ref removeCols, ref removeRows);
+                isSpNonSinglePrime = check_SinglePrimeInCol(ref primeChart, ref removeCols, ref removeRows, ref essentialPrimes);
+                if (isSpRow && isSpCol && isSpNonSinglePrime) handle_SpecialCaseChart(ref primeChart, ref removeCols, ref removeRows, ref essentialPrimes);
+                if (!check_LoopCondition(ref colsPrimeChart, ref removeCols)) break;
+                if (count > 100)
+                    throw new Exception("[ERROR] Qua nhieu tinh toan hoac vong lap vo han");
+                count++;
+            }
             return essentialPrimes;
+        }
+
+        private bool check_LoopCondition(ref List<int> colsPrimeChart, ref HashSet<int> removeCols)
+        {
+            for (int col = 0; col < colsPrimeChart.Count; col++)
+                if (!removeCols.Contains(col)) return true;
+            return false;
+        }
+
+        private void handle_SpecialCaseChart(ref List<List<int>> primeChart, ref HashSet<int> removeCols, ref HashSet<int> removeRows, ref List<int> essentialPrimes)
+        {
+            List<List<int>> rowFirstPrimeChart = transform_ColFirstPrimeChartToRowFirst(ref primeChart);
+            int currCount = 0;
+            int prevCount = 0;
+            int rowToRemove = 0;
+            int prime = 0;
+            for (int row = 0; row < rowFirstPrimeChart.Count; row++)
+            {
+                if (removeRows.Contains(row))
+                    continue;
+                for (int col = 0; col < rowFirstPrimeChart[row].Count; col++)
+                {
+                    if (rowFirstPrimeChart[row][col] != -1 && !removeCols.Contains(col))
+                    {
+                        currCount++;
+                        prime = rowFirstPrimeChart[row][col];
+                    }
+                }
+                if (prevCount < currCount)
+                {
+                    prevCount = currCount;
+                    rowToRemove = prime;
+                }
+                currCount = 0;
+            }
+            display_Result("[INFO] Tinh toan truong hop dac biet khi khong the loai bo row/column");
+            essentialPrimes.Add(rowToRemove);
+            remove_ColInPrimeChart(ref primeChart, rowToRemove, ref removeCols, ref removeRows);
+            removeRows.Add(rowToRemove);
+        }
+
+        private bool check_SinglePrimeInCol(ref List<List<int>> primeChart, ref HashSet<int> removeCols, ref HashSet<int> removeRows, ref List<int> essentialPrimes)
+        {
+            bool isSpecialCase = true;
+            int count = 0;
+            int foundRow = 0;
+            for (int col = 0; col < primeChart.Count; col++)
+            {
+                if (removeCols.Contains(col))
+                    continue;
+                for (int row = 0; row < primeChart[col].Count; row++)
+                {
+                    if (primeChart[col][row] != -1 && !removeRows.Contains(primeChart[col][row]))
+                    {
+                        count++;
+                        foundRow = primeChart[col][row];
+                    }
+                }
+                if (count == 1)
+                {
+                    essentialPrimes.Add(foundRow);
+                    remove_ColInPrimeChart(ref primeChart, foundRow, ref removeCols, ref removeRows);
+                    removeRows.Add(foundRow);
+                    isSpecialCase = false;
+                }
+                count = 0;
+            }
+            return isSpecialCase;
+        }
+
+        private void remove_ColInPrimeChart(ref List<List<int>> primeChart, int compareValue, ref HashSet<int> removeCols, ref HashSet<int> removeRows)
+        {
+            for (int col = 0; col < primeChart.Count; col++)
+            {
+                if (removeCols.Contains(col))
+                    continue;
+                for (int row = 0; row < primeChart[col].Count; row++)
+                {
+                    if (primeChart[col][row] == compareValue && !removeRows.Contains(row))
+                        removeCols.Add(col);
+                }
+            }
         }
 
         private bool check_ColDominance(ref List<List<int>> primeChart, ref HashSet<int> removeCols, ref HashSet<int> removeRows)
@@ -448,14 +540,13 @@ namespace WinFormsApp1
             bool isSpecialCase = true;
             List<int> currColCheckPos = new List<int>();
             List<int> cmpColCheckPos = new List<int>();
-            display_Result("Col dominance");
             for (int currCol = 0; currCol < primeChart.Count; currCol++)
             {
                 for (int cmpCol = 0; cmpCol < primeChart.Count; cmpCol++)
                 {
                     if (currCol == cmpCol || removeCols.Contains(currCol) || removeCols.Contains(cmpCol))
                         continue;
-                    for(int row = 0; row < primeChart[currCol].Count; row++)
+                    for (int row = 0; row < primeChart[currCol].Count; row++)
                     {
                         if (primeChart[currCol][row] != -1 && !removeRows.Contains(row))
                             currColCheckPos.Add(row);
@@ -463,7 +554,7 @@ namespace WinFormsApp1
                             cmpColCheckPos.Add(row);
                     }
                     int count = 0;
-                    if(currColCheckPos.Count > cmpColCheckPos.Count)
+                    if (currColCheckPos.Count > cmpColCheckPos.Count)
                     {
                         foreach (int rowCheckIdx in cmpColCheckPos)
                             if (primeChart[currCol][rowCheckIdx] != -1
@@ -474,7 +565,8 @@ namespace WinFormsApp1
                             removeCols.Add(currCol);
                             isSpecialCase = false;
                         }
-                    } else if (currColCheckPos.Count < cmpColCheckPos.Count)
+                    }
+                    else if (currColCheckPos.Count < cmpColCheckPos.Count)
                     {
                         foreach (int rowCheckIdx in currColCheckPos)
                             if (primeChart[cmpCol][rowCheckIdx] != -1
@@ -483,13 +575,15 @@ namespace WinFormsApp1
                         if (count >= currColCheckPos.Count)
                         {
                             removeCols.Add(cmpCol);
-                            isSpecialCase= false;
+                            isSpecialCase = false;
                         }
                     }
                     currColCheckPos.Clear();
                     cmpColCheckPos.Clear();
                 }
             }
+            if (!isSpecialCase)
+                display_Result("[INFO] Loai bo column");
             return isSpecialCase;
         }
 
@@ -499,12 +593,11 @@ namespace WinFormsApp1
             List<int> currRowCheckPos = new List<int>();
             List<int> cmpRowCheckPos = new List<int>();
             List<List<int>> rowFirstPrimeChart = transform_ColFirstPrimeChartToRowFirst(ref primeChart);
-            display_Result("Row dominance");
             for (int currRow = 0; currRow < rowFirstPrimeChart.Count; currRow++)
             {
-                for(int cmpRow = 0; cmpRow < rowFirstPrimeChart.Count; cmpRow++)
+                for (int cmpRow = 0; cmpRow < rowFirstPrimeChart.Count; cmpRow++)
                 {
-                    if (currRow == cmpRow || removeRows.Contains(cmpRow) || removeRows.Contains(currRow)) 
+                    if (currRow == cmpRow || removeRows.Contains(cmpRow) || removeRows.Contains(currRow))
                         continue;
                     for (int col = 0; col < rowFirstPrimeChart[currRow].Count; col++)
                     {
@@ -532,7 +625,7 @@ namespace WinFormsApp1
                             if (rowFirstPrimeChart[cmpRow][colCheckIdx] != -1
                                 && !removeRows.Contains(rowFirstPrimeChart[cmpRow][colCheckIdx]))
                                 count++;
-                        if(count >= currRowCheckPos.Count)
+                        if (count >= currRowCheckPos.Count)
                         {
                             removeRows.Add(currRow);
                             isSpecialCase = false;
@@ -542,6 +635,8 @@ namespace WinFormsApp1
                     cmpRowCheckPos.Clear();
                 }
             }
+            if (!isSpecialCase)
+                display_Result("[INFO] Loai bo row");
             return isSpecialCase;
         }
 
@@ -551,12 +646,30 @@ namespace WinFormsApp1
             for (int i = 0; i < primeChart[0].Count; i++)
             {
                 newPrimeChartRowFirst.Add(new List<int>());
-                for(int j = 0; j < primeChart.Count; j++)
+                for (int j = 0; j < primeChart.Count; j++)
                 {
                     newPrimeChartRowFirst[i].Add(primeChart[j][i]);
                 }
             }
             return newPrimeChartRowFirst;
+        }
+
+        private (string, string) get_FormattedPrimeString(PrimeImplicant obj)
+        {
+            string numbListString = String.Join(",", obj.numbList);
+            string bits = "";
+            int shift = inputVariables.Count - 1;
+            for (int i = 0; i < inputVariables.Count; i++)
+            {
+                int currBitCheck = (obj.valueBin >> shift) & 1;
+                int currDashBitCheck = (obj.dashBin >> shift) & 1;
+                char currChar = inputVariables[i];
+                if (currBitCheck == 1 && currDashBitCheck != 1) bits += currChar;
+                else if (currBitCheck != 1 && currDashBitCheck != 1) bits += currChar + "'";
+                shift--;
+            }
+            if (bits.Length <= 0) bits = "1";
+            return (numbListString, bits);
         }
 
         private void main_QuineMcCluskeyAlgo()
@@ -567,7 +680,7 @@ namespace WinFormsApp1
             inputVals.Sort();
             display_Inputs(inputVals);
             // Main
-            Dictionary<int, List<PrimeImplicant>>groups = new Dictionary<int, List<PrimeImplicant>>();
+            Dictionary<int, List<PrimeImplicant>> groups = new Dictionary<int, List<PrimeImplicant>>();
             arrange_InputGroup(groups);
             int maxNumbBitLength = get_BinaryLengthOfNumb(inputVals[inputVals.Count - 1]);
             int iteration = 0;
@@ -576,32 +689,38 @@ namespace WinFormsApp1
                 Dictionary<int, List<PrimeImplicant>> newGroups = find_NextPrimeGroups(groups, maxNumbBitLength);
                 if (check_GroupsEquality(ref newGroups, ref groups)) break;
                 groups = clear_PrimeMatchStatusInGroups(newGroups);
-                display_Result($"Lan lap thu: {iteration + 1}");
+                display_Result($"[INFO] Sau lan lap thu: {iteration + 1}");
                 iteration++;
-                if (iteration >= 10)
-                {
-                    display_Result("[ERROR] Experiment infinity loop");
-                    break;
-                }
+                if (iteration >= 100)
+                    throw new Exception("[ERROR] Qua nhieu tinh toan hoac vong lap vo han");
             }
-            //display_PrimeGroups(groups);
             List<PrimeImplicant> finalPrimeList = new List<PrimeImplicant>();
             finalPrimeList = get_PrimesNoDupInGroups(ref groups);
+            display_Result("[INFO] Cac gia tri tich cuc tieu sau khi bat cap");
             foreach (PrimeImplicant prime in finalPrimeList)
             {
-                display_Prime(prime);
+                (string numbsList, string variables) = get_FormattedPrimeString(prime);
+                display_Result($"{numbsList} - {variables}");
             }
+            display_Result("[INFO] Lap bang de rut gon: ");
             (List<List<int>> primeChart, List<int> colsOfPrimeChart) = create_PrimeChart(finalPrimeList);
-            //Console.WriteLine("Col dominance");
-            //for (int i = 0; i < primeChart.Count; i++)
-            //{
-            //    for (int j = 0; j < primeChart[0].Count; j++)
-            //    {
-            //        Console.Write($"{primeChart[i][j]},");
-            //    }
-            //    Console.WriteLine("");
-            //}
-            get_EssentialPrimes(ref primeChart, ref colsOfPrimeChart);
+            List<int> essentialPrimeListIdx = get_EssentialPrimes(ref primeChart, ref colsOfPrimeChart);
+            display_Result("[INFO] Bieu thuc rut gon Y: ");
+            string numbsListShowCase = "Cac cap gia tri: ";
+            string variablesShowCase = "Y = ";
+            for (int idx = 0; idx < essentialPrimeListIdx.Count; idx++)
+            {
+                (string numbsList, string variables) = get_FormattedPrimeString(finalPrimeList[essentialPrimeListIdx[idx]]);
+                numbsListShowCase += numbsList;
+                variablesShowCase += variables;
+                if (idx + 1 < essentialPrimeListIdx.Count)
+                {
+                    numbsListShowCase += " - ";
+                    variablesShowCase += " + ";
+                }
+            }
+            display_Result(numbsListShowCase);
+            display_Result(variablesShowCase);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
