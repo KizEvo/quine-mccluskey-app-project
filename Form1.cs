@@ -89,14 +89,25 @@ namespace WinFormsApp1
         {
             int maxValue = inputVals[inputVals.Count - 1];
             int maxBit = get_BinaryLengthOfNumb(maxValue);
-            inputDontCares.Sort();
-            int maxValueDontCare = inputDontCares[inputDontCares.Count - 1];
-            int maxBitDontCare = get_BinaryLengthOfNumb(maxValueDontCare);
-            if (maxBit != inputVariables.Count && maxBitDontCare != inputVariables.Count)
+            if (inputDontCares.Count > 0)
             {
-                string message =
-                    String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them hoac bo <ten_bien>", maxValue > maxValueDontCare ? maxValue:maxValueDontCare, maxBit > maxBitDontCare ? maxBit:maxBitDontCare, inputVariables.Count);
-                throw new Exception(message);
+                inputDontCares.Sort();
+                int maxValueDontCare = inputDontCares[inputDontCares.Count - 1];
+                int maxBitDontCare = get_BinaryLengthOfNumb(maxValueDontCare);
+                if (maxBit != inputVariables.Count && maxBitDontCare != inputVariables.Count)
+                {
+                    string message =
+                        String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them hoac bo <ten_bien>", maxValue > maxValueDontCare ? maxValue : maxValueDontCare, maxBit > maxBitDontCare ? maxBit : maxBitDontCare, inputVariables.Count);
+                    throw new Exception(message);
+                }
+            } else
+            {
+                if (maxBit != inputVariables.Count)
+                {
+                    string message =
+                        String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them hoac bo <ten_bien>", maxValue, maxBit, inputVariables.Count);
+                    throw new Exception(message);
+                }
             }
         }
 
