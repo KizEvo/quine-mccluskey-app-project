@@ -94,10 +94,11 @@ namespace WinFormsApp1
                 inputDontCares.Sort();
                 int maxValueDontCare = inputDontCares[inputDontCares.Count - 1];
                 int maxBitDontCare = get_BinaryLengthOfNumb(maxValueDontCare);
-                if (maxBit != inputVariables.Count && maxBitDontCare != inputVariables.Count)
+                int cmpBoth = maxBit > maxBitDontCare ? maxBit : maxBitDontCare;
+                if (cmpBoth != inputVariables.Count)
                 {
                     string message =
-                        String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them hoac bo <ten_bien>", maxValue > maxValueDontCare ? maxValue : maxValueDontCare, maxBit > maxBitDontCare ? maxBit : maxBitDontCare, inputVariables.Count);
+                        String.Format("[ERROR]: bit max({0})={1} != <ten_bien>={2}, hay nhap them hoac bo <ten_bien>", maxValue > maxValueDontCare ? maxValue : maxValueDontCare, cmpBoth, inputVariables.Count);
                     throw new Exception(message);
                 }
             } else
